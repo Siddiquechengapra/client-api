@@ -1,4 +1,5 @@
 const express= require("express")
+require("dotenv").config()
 const app=express()
 const bodyparser=require("body-parser")
 const cors=require("cors")
@@ -12,6 +13,27 @@ app.use(cors())
 app.use(morgan())
 app.use(bodyparser.urlencoded({extended:true}))
 app.use(bodyparser.json())
+
+const mongoose=require("mongoose")
+ mongoose.connect(process.env.MONGO_URL,{
+    useNewUrlParser:true,
+    useUnifiedTopology:true,
+    useFindAndModify:false,
+    useCreateIndex:true
+})
+
+if(process.env.NODE_ENV !=="production"){
+    const mDb=mongoose.connection
+    mDb.on("open",()=>{
+        console.log("MongoDB is connected ")
+    
+    })
+    mDb.on("error",(error)=>{
+        console.log("MongoDB is having error ",error)
+    
+    })
+
+}
 
 
 //routers
