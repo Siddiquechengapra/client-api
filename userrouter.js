@@ -2,6 +2,7 @@ const express=require("express")
 const router=express.Router()
 const {insertUser,getuserbyemail} =require("./Model/Usermodel")
 const {hashpassword,comparepassword} =require("./Helpers/bcrypthelper")
+const {createJwt,refreshJwt}=require("./Helpers/jtwthelper")
 
 router.all("/",(req,res,next)=>{
     // res.json({message:"return from user router "})
@@ -55,7 +56,16 @@ router.post("/login",async (req,res)=>{
     const passfromdb=user && user._id ?user.password:null
     if(user){
     const result=await comparepassword(password,passfromdb)
-    return (console.log(result))
+    
+    if(result){
+        const accessjwt= await createJwt(user.email)
+        const refreshjwt=await refreshJwt(user.email)
+
+        res.json({status:"success",message:"login successfully",accessjwt,refreshjwt})
+    }
+    else{
+        return res.send("Mo result,password is wrong")
+    }
 
     }
     if(!user){
