@@ -37,13 +37,31 @@ exports.getuserbyemail =email=>{
         })
 
     })
+}
 
-           
+exports.storeUserRefreshJWT=(_id,token)=>{
+         return new Promise((resolve,reject)=>{
+             try{
+                    User.findOneAndUpdate({_id},{
+                        $set:{"refreshJWT.token":token,
+                        "refreshJWT.addedAt":Date.now()}
+                    }).then((data)=>{
+                        resolve(data)
+                    }
+                    ).catch((err)=>{
+                        reject(err)
+                    })
+             }
+             catch(error){
+                    reject(error)
+             }  
+         })
+     }      
         
        
         
 
     
     
-}
+
  

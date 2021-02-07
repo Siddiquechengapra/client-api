@@ -2,7 +2,7 @@ const express=require("express")
 const router=express.Router()
 const {insertUser,getuserbyemail} =require("./Model/Usermodel")
 const {hashpassword,comparepassword} =require("./Helpers/bcrypthelper")
-const {createJwt,refreshJwt}=require("./Helpers/jtwthelper")
+const {createJWT,refreshJWT}=require("./Helpers/jwthelper")
 
 router.all("/",(req,res,next)=>{
     // res.json({message:"return from user router "})
@@ -54,12 +54,12 @@ router.post("/login",async (req,res)=>{
     
     
     const passfromdb=user && user._id ?user.password:null
-    if(user){
+    if(user){  
     const result=await comparepassword(password,passfromdb)
     
     if(result){
-        const accessjwt= await createJwt(user.email)
-        const refreshjwt=await refreshJwt(user.email)
+        const accessjwt= await createJWT(user.email,`${user._id}`)
+        const refreshjwt=await refreshJWT(user.email,`${user._id}`)
 
         res.json({status:"success",message:"login successfully",accessjwt,refreshjwt})
     }

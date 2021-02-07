@@ -32,6 +32,19 @@ const UserSchema = new Schema({
         type:String,
         minlength:8,
         required:true
+    },
+    refreshJWT:{
+        token:{
+            type:String,
+            maxlength:600,
+            default:""
+        },
+        addeedat:{
+            type:Date,
+            required:true,
+            default:Date.now()
+        }
+
     }
 })
 const User =mongoose.model('User',UserSchema)
