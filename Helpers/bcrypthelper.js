@@ -6,3 +6,17 @@ exports. hashpassword=plainpassword=>{
         resolve(bcrypt.hashSync(plainpassword,saltrounds))
     })
 }
+
+exports.comparepassword=(plainpassword,passfromdb)=>{
+    return new Promise((resolve,reject)=>{
+
+        bcrypt.compare(plainpassword,passfromdb ,function(err,result){
+                if(err){
+                    reject(err)
+                }
+
+                resolve(result)
+        })
+
+    })
+}

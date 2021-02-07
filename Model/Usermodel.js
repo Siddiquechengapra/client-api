@@ -16,4 +16,34 @@ exports.insertUser=(userObj) =>{
     
 }
 
+
+exports.getuserbyemail =email=>{
+
+    return new Promise((resolve,reject)=>{
+        if(!email){
+            reject (false )
+        }
+        User.findOne({email},(err,data)=>{
+            if(err){
+                console.log("inside err")
+                reject(err)
+
+                
+            }
+            console.log("outside err")
+
+           resolve (data)
+
+        })
+
+    })
+
+           
+        
+       
+        
+
+    
+    
+}
  

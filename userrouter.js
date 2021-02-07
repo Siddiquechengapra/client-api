@@ -1,7 +1,7 @@
 const express=require("express")
 const router=express.Router()
-const {insertUser} =require("./Model/Usermodel")
-const {hashpassword} =require("./Helpers/bcrypthelper")
+const {insertUser,getuserbyemail} =require("./Model/Usermodel")
+const {hashpassword,comparepassword} =require("./Helpers/bcrypthelper")
 
 router.all("/",(req,res,next)=>{
     // res.json({message:"return from user router "})
@@ -36,6 +36,35 @@ router.post("/",async(req,res)=>{
 
 
     }
+    
+})
+
+//user signin router 
+router.post("/login",async (req,res)=>{
+
+
+        const {email,password}=req.body
+
+    if(!email || !password){
+        return res.json("invalid form submission")
+    }
+
+    const user =await getuserbyemail(email)
+    
+    
+    const passfromdb=user && user._id ?user.password:null
+    if(user){
+    const result=await comparepassword(password,passfromdb)
+    return (console.log(result))
+
+    }
+    if(!user){
+        return res.json({status:"error",message:"invalid email or password"})
+    }
+    
+ 
+    
+
     
 })
 
