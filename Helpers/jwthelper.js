@@ -46,3 +46,40 @@ exports. verifyRefreshJWT = (userJWT) => {
   }
 };
 
+exports.verifyAccessJWT=userJWT=>{
+
+  return new Promise((resolve,reject)=>{
+    jwt.verify(userJWT,process.env.JWT_ACCESS_SECRET,function(err,decoded){
+      if(err){
+        console.log("error is ",err)
+      }
+      else{
+       
+        resolve(decoded)
+      }
+    })
+
+  })
+  
+  
+}
+
+
+exports.verifyrefreshJWT=userJWT=>{
+
+  return new Promise((resolve,reject)=>{
+    jwt.verify(userJWT,process.env.JWT_REFRESH_SECRET,function(err,decoded){
+      if(err){
+        console.log("error is ",err)
+      }
+      else{
+       
+        resolve(decoded)
+      }
+    })
+
+  })
+  
+  
+}
+

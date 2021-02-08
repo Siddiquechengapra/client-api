@@ -1,32 +1,43 @@
 const express=require("express")
 const router=express.Router()
-const {insertUser,getuserbyemail} =require("./Model/Usermodel")
+const {insertUser,getuserbyemail,getUserbyId} =require("./Model/Usermodel")
 const {hashpassword,comparepassword} =require("./Helpers/bcrypthelper")
 const {createJWT,refreshJWT}=require("./Helpers/jwthelper")
+const {userAuth} =require("./Middlewares/authorization")
 
 router.all("/",(req,res,next)=>{
     // res.json({message:"return from user router "})
     next()
 })
 
+router.get("/",userAuth,async(req,res)=>{
+
+    try{
+        const _id=req.userId
+        console.log("_i",_id)
+   
+        const userProf=await getUserbyId(_id)
+        console.log("userprod",userProf)
+         
+        res.json({user : userProf})
+   }
+   catch(error){ 
+        console.log("error catched",error)
+   }
+   })
+//create new user(/v1/user/)
 router.post("/",async(req,res)=>{
 
     const {name,company,address,phone,email,password}=req.body
 
 
-    try{
-
-        //haspassword
+    try{   //haspassword
     const hashedpass=await hashpassword(password)
     const newUserObj={
         name,company,address,phone,email,
         password:hashedpass
          
     }
-
-
-
-
     const result=await insertUser(newUserObj)
     console.log(result)
     res.json({message :"New user created " ,result})
@@ -39,6 +50,7 @@ router.post("/",async(req,res)=>{
     }
     
 })
+//create new user(/v1/user/login)
 
 //user signin router 
 router.post("/login",async (req,res)=>{
@@ -77,5 +89,9 @@ router.post("/login",async (req,res)=>{
 
     
 })
+
+
+
+    
 
 module.exports=router

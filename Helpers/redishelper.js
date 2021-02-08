@@ -19,12 +19,17 @@ exports.setJWT=(key,value)=>{
 
 exports.getJWT=(key,value)=>{
 
-    client.get('key',function(err,res){
+    return new Promise((resolve,reject)=>{
+        client.get(key,function(err,res){
             if(err){
-                console.log(err)
+                reject(err)
             }
             else{
-                return res
+                resolve(res)
             }
     })
+
+    })
+
+    
 }

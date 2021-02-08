@@ -57,6 +57,24 @@ exports.storeUserRefreshJWT=(_id,token)=>{
              }  
          })
      }      
+
+     exports.getUserbyId =(_id)=>{
+
+        return new Promise(async(resolve,reject)=>{
+            if(!_id){
+                reject (false )
+            }
+            await User.findById({_id},(err,data)=>{
+                if(err){
+                    reject(err)
+                 }
+                 console.log("gettin data ")
+               resolve(data)
+    
+            })
+    
+        })
+    }
         
        
         
