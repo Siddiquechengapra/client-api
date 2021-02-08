@@ -1,6 +1,7 @@
 const {verifyAccessJWT}= require("../Helpers/jwthelper")
 
-const {getJWT}= require("../Helpers/redishelper")
+
+const {getJWT,deletJWT}= require("../Helpers/redishelper")
 
 exports. userAuth=async(req,res,next)=>{
     const {authorization}=req.headers
@@ -19,8 +20,10 @@ exports. userAuth=async(req,res,next)=>{
          }
          
     }
+    else{
+      deletJWT(authorization.split(" ")[1])
+    }
    
  
-
-    next()
+    
 }

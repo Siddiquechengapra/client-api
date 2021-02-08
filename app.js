@@ -21,7 +21,7 @@ const mongoose=require("mongoose")
     useFindAndModify:false,
     useCreateIndex:true
 })
-
+ 
 if(process.env.NODE_ENV !=="production"){
     const mDb=mongoose.connection
     mDb.on("open",()=>{
@@ -41,7 +41,7 @@ const userRouter=require("./userrouter")
 const ticketRouter=require("./ticketrouter")
 const tokensRouter=require("./tokensRouter")
 
-const handleerror=require("./errorhandler")
+
 
 app.use("/v1/user",userRouter)
 app.use("/v1/ticket",ticketRouter)
@@ -54,7 +54,7 @@ const port=process.env.PORT || 3001
 
 
 
-app.use("*",( req,res,next) =>{
+app.use(( req,res,next) =>{
     console.log("inside this *")
     const error= new Error("resource not found")
     error.status=404
@@ -62,8 +62,11 @@ app.use("*",( req,res,next) =>{
 })
 app.use((error,req,res,next)=>{
     console.log("inside this * 2")
-
-    handleerror(error,res)
+    
+    res.status(error.status || 500)
+    res.json({
+        message : error.message
+    })
 })
 
 app.listen(port,()=>{

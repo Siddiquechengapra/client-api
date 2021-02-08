@@ -9,7 +9,7 @@ exports.setJWT=(key,value)=>{
 
     client.set(key,value,function(err,res){
             if(err){
-                console.log("error is ",err)
+                console.log("error is in setJWT ",err)
             }
             else{
                 return res
@@ -32,4 +32,13 @@ exports.getJWT=(key,value)=>{
     })
 
     
+}
+
+exports.deletJWT=key=>{
+    try{
+        client.del(key)
+    }
+    catch(error){
+            console.log("error from redis token refreshing :",error)
+    }
 }

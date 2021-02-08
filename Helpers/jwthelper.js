@@ -8,7 +8,7 @@ exports. createJWT = async (email, _id) => {
     const accessJWT = await jwt.sign({ email }, process.env.JWT_ACCESS_SECRET, {
       expiresIn: "1d", //change this to 15m
     });
-
+    console.log("types:",typeof accessJWT,typeof _id)
     await setJWT(accessJWT, _id);
 
     return Promise.resolve(accessJWT);
@@ -51,7 +51,7 @@ exports.verifyAccessJWT=userJWT=>{
   return new Promise((resolve,reject)=>{
     jwt.verify(userJWT,process.env.JWT_ACCESS_SECRET,function(err,decoded){
       if(err){
-        console.log("error is ",err)
+        console.log("error is in verify access JWT ",err)
       }
       else{
        
@@ -70,7 +70,7 @@ exports.verifyrefreshJWT=userJWT=>{
   return new Promise((resolve,reject)=>{
     jwt.verify(userJWT,process.env.JWT_REFRESH_SECRET,function(err,decoded){
       if(err){
-        console.log("error is ",err)
+        console.log("error is in verifyrefreshJWT ",err)
       }
       else{
        

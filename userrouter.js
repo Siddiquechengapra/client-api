@@ -5,24 +5,24 @@ const {hashpassword,comparepassword} =require("./Helpers/bcrypthelper")
 const {createJWT,refreshJWT}=require("./Helpers/jwthelper")
 const {userAuth} =require("./Middlewares/authorization")
 
-router.all("/",(req,res,next)=>{
-    // res.json({message:"return from user router "})
-    next()
-})
+// router.all("/",(req,res,next)=>{
+//     // res.json({message:"return from user router "})
+//     next()
+// })
 
 router.get("/",userAuth,async(req,res)=>{
 
     try{
         const _id=req.userId
-        console.log("_i",_id)
+        console.log("_id :",_id)
    
         const userProf=await getUserbyId(_id)
-        console.log("userprod",userProf)
+        console.log("userprod :",userProf)
          
         res.json({user : userProf})
    }
    catch(error){ 
-        console.log("error catched",error)
+        console.log("error catched :",error)
    }
    })
 //create new user(/v1/user/)
