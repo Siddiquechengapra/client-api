@@ -44,6 +44,25 @@ exports.getPinbyEmailPin=(email,pin)=>{
     
 }
 
+exports.deletePin=(email,pin)=>{
+
+    
+        try{
+            ResetModel.findOneAndDelete({email,pin}).exec((error,data)=>{
+                if(error){
+                   console.log("pin data deleted")
+                }
+            }) 
+        }
+        catch(error){
+            
+            console.log(error )
+        }
+
+    
+    
+}
+
 
 
        

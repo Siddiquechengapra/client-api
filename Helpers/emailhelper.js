@@ -42,7 +42,7 @@ const emailProcessor = ({ email, pin, type }) => {
         console.log("inside switch 1")
       info = {
         from: '"CMR Company" <abe.kohler59@ethereal.email>', // sender address
-        to: `siddiquechengapra@gmail.com`, // list of receivers
+        to: `${email}`, // list of receivers
         subject: "Password rest Pin", // Subject line
         text:
           "Here is your password rest pin" +
@@ -62,7 +62,7 @@ const emailProcessor = ({ email, pin, type }) => {
     case "update-password-success":
       info = {
         from: '"CMR Company" <abe.kohler59@ethereal.email>', // sender address
-        to: `${email}@gmail.com`, // list of receivers
+        to: `${email}`, // list of receivers
         subject: "Password updated", // Subject line
         text: "Your new password has been update", // plain text body
         html: `<b>Hello </b>

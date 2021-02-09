@@ -4,8 +4,9 @@ const {insertUser,getuserbyemail,getUserbyId,updatePassword} =require("./Model/U
 const {hashpassword,comparepassword} =require("./Helpers/bcrypthelper")
 const {createJWT,refreshJWT}=require("./Helpers/jwthelper")
 const {userAuth} =require("./Middlewares/authorization")
-const {setPasswordRestPin,getPinbyEmailPin}=require("./Model/restPIn")
+const {setPasswordRestPin,getPinbyEmailPin,deletePin}=require("./Model/restPIn")
 const {emailProcessor}=require("./Helpers/emailhelper")
+const {resetPassvalidation,updatePassvalidation}=require("./Middlewares/formvalidatorjoi")
 
 
 // router.all("/",(req,res,next)=>{
@@ -94,8 +95,8 @@ router.post("/login",async (req,res)=>{
 
     
 })
-
-router.post("/reset-password",async(req,res)=>{
+//generate pin and mail
+router.post("/reset-password",resetPassvalidation,async(req,res)=>{
 
     const {email}=req.body
     const user= await getuserbyemail(email)
@@ -113,7 +114,7 @@ router.post("/reset-password",async(req,res)=>{
         return res.json({status:"error",
           message:"unable tosend ,please try later "})
     }
-        
+         
        
 
 
@@ -125,13 +126,13 @@ router.post("/reset-password",async(req,res)=>{
 
 })
 
-
-router.patch("/reset-password",async(req,res)=>{
+//update password 
+router.patch("/reset-password",updatePassvalidation,async(req,res)=>{
     const {email,pin,newpassword}=req.body
 
    const getPin=await getPinbyEmailPin(email,pin)
 
-   if(getPin._id){
+   if(getPin && getPin._id){
        const dbDate= getPin.addedat
        const expiresIn=1
 
@@ -140,16 +141,24 @@ router.patch("/reset-password",async(req,res)=>{
        console.log("today:",today)
        console.log("exp:",expDate)
 
-       if (today<expDate){
+       if (today < expDate){
            return res.json({message :"invalid or pin expired"})
        }
        //encrypt new password 
        const hashedpass=await hashpassword(newpassword)
        console.log("hashed pass",hashedpass)
        const result =await updatePassword(email,hashedpass)
+       console.log("result is :",result)
        if(result._id){
+
+        //send mail user notification on updation
+        await emailProcessor({email:email,type:"update-password-success"})
+        deletePin(email,pin)
+
          return   res.json({message:"pwd has been updated "})
        }
+   }else{
+       return res.json({message :" No user found or is deleted"})
    }
 
     
