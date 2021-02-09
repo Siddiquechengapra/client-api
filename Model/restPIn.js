@@ -20,6 +20,27 @@ exports.setPasswordRestPin=(email) =>{
         })
     })
    
+
+}
+//promise tutorial
+exports.getPinbyEmailPin=(email,pin)=>{
+
+    return new Promise((resolve,reject)=>{
+        try{
+            ResetModel.findOne({email,pin}).exec((error,data)=>{
+                if(error){
+                    resolve(error)
+                }else{
+                    resolve(data)
+                }
+            })
+        }
+        catch(error){
+            reject(error)
+            console.log(error )
+        }
+
+    })
     
 }
 

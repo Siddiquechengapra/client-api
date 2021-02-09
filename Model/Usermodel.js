@@ -66,7 +66,7 @@ exports.storeUserRefreshJWT=(_id,token)=>{
             }
             await User.findById({_id},(err,data)=>{
                 if(err){
-                    reject(err)
+                    reject(err) 
                  }
                  console.log("gettin data ")
                resolve(data)
@@ -76,10 +76,26 @@ exports.storeUserRefreshJWT=(_id,token)=>{
         })
     }
         
-       
-        
+     exports.updatePassword=(email,newhashedpass)=>{
+         return new Promise((resolve,reject)=>{
+            try{
+                User.findOneAndUpdate ({email},{
+                    $set:{"password":newhashedpass}
+                },{new:true}).exec((err,data)=>{
+                    if(err){
+                       return res.json({message : "error in findoneandupdate Updatepassword"})
+                    }
+                    else {
+                        resolve(data)
+                    }
+                })
+         }
+         catch(error){
+                reject(error)
+         }  
+     })
+ }      
 
-    
     
 
  

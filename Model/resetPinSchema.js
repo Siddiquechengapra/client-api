@@ -6,7 +6,7 @@ const resetPinSchema = new Schema({
         type:String,
         maxlenght:6,
         minlength:6
-
+ 
     },
     
     email:{
@@ -20,18 +20,10 @@ const resetPinSchema = new Schema({
         minlength:8,
         
     },
-    refreshJWT:{
-        token:{
-            type:String,
-            maxlength:600,
-            default:""
-        },
-        addeedat:{
-            type:Date,
-            required:true,
-            default:Date.now()
-        }
-
+    addedat:{
+        type:Date,
+        required:true,
+        default:Date.now()
     }
 })
 const ResetModel =mongoose.model('ResetModel',resetPinSchema)

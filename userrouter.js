@@ -1,10 +1,13 @@
 const express=require("express")
 const router=express.Router()
-const {insertUser,getuserbyemail,getUserbyId} =require("./Model/Usermodel")
+const {insertUser,getuserbyemail,getUserbyId,updatePassword} =require("./Model/Usermodel")
 const {hashpassword,comparepassword} =require("./Helpers/bcrypthelper")
 const {createJWT,refreshJWT}=require("./Helpers/jwthelper")
 const {userAuth} =require("./Middlewares/authorization")
-const {setPasswordRestPin}=require("./Model/restPIn")
+const {setPasswordRestPin,getPinbyEmailPin}=require("./Model/restPIn")
+const {emailProcessor}=require("./Helpers/emailhelper")
+
+
 // router.all("/",(req,res,next)=>{
 //     // res.json({message:"return from user router "})
 //     next()
@@ -98,21 +101,60 @@ router.post("/reset-password",async(req,res)=>{
     const user= await getuserbyemail(email)
     console.log("new user:",user)
     if(user && user._id){
-        const setPin= await setPasswordRestPin(email).then((data)=>{
-        console.log("new setpin:",data)
+    const setPin= await setPasswordRestPin(email)
+    console.log("set pin : ",setPin)
+    const result=await emailProcessor({email:email,pin:setPin.pin,type:"request-new-password"})
+     console.log("result : ",result)
+    if(result && result.messageId){
+    return res.json({
+              status:"successs",
+             message:"if the mail is exist in oput databse, the password reset pin will be sent shortly"})
+     }else{
+        return res.json({status:"error",
+          message:"unable tosend ,please try later "})
+    }
         
+       
 
-        }).catch((err)=>{
-            console.log("error in catch of setresetpass",err)
-        })
-    return res.json({setPin})
 
 
         
     }
+    return res.json({setPin})
+
 
 })
 
+
+router.patch("/reset-password",async(req,res)=>{
+    const {email,pin,newpassword}=req.body
+
+   const getPin=await getPinbyEmailPin(email,pin)
+
+   if(getPin._id){
+       const dbDate= getPin.addedat
+       const expiresIn=1
+
+       const expDate=Date(dbDate.setDate(dbDate.getDate()+expiresIn) )
+       const today=new Date()
+       console.log("today:",today)
+       console.log("exp:",expDate)
+
+       if (today<expDate){
+           return res.json({message :"invalid or pin expired"})
+       }
+       //encrypt new password 
+       const hashedpass=await hashpassword(newpassword)
+       console.log("hashed pass",hashedpass)
+       const result =await updatePassword(email,hashedpass)
+       if(result._id){
+         return   res.json({message:"pwd has been updated "})
+       }
+   }
+
+    
+
+})
     
 
 module.exports=router
