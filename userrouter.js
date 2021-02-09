@@ -4,12 +4,14 @@ const {insertUser,getuserbyemail,getUserbyId} =require("./Model/Usermodel")
 const {hashpassword,comparepassword} =require("./Helpers/bcrypthelper")
 const {createJWT,refreshJWT}=require("./Helpers/jwthelper")
 const {userAuth} =require("./Middlewares/authorization")
-
+const {setPasswordRestPin}=require("./Model/restPIn")
 // router.all("/",(req,res,next)=>{
 //     // res.json({message:"return from user router "})
 //     next()
 // })
 
+
+//get userprofile router
 router.get("/",userAuth,async(req,res)=>{
 
     try{
@@ -90,7 +92,26 @@ router.post("/login",async (req,res)=>{
     
 })
 
+router.post("/reset-password",async(req,res)=>{
 
+    const {email}=req.body
+    const user= await getuserbyemail(email)
+    console.log("new user:",user)
+    if(user && user._id){
+        const setPin= await setPasswordRestPin(email).then((data)=>{
+        console.log("new setpin:",data)
+        
+
+        }).catch((err)=>{
+            console.log("error in catch of setresetpass",err)
+        })
+    return res.json({setPin})
+
+
+        
+    }
+
+})
 
     
 
