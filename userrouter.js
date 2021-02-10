@@ -1,12 +1,13 @@
 const express=require("express")
 const router=express.Router()
-const {insertUser,getuserbyemail,getUserbyId,updatePassword} =require("./Model/Usermodel")
+const {insertUser,getuserbyemail,getUserbyId,updatePassword,storeUserRefreshJWT} =require("./Model/Usermodel")
 const {hashpassword,comparepassword} =require("./Helpers/bcrypthelper")
 const {createJWT,refreshJWT}=require("./Helpers/jwthelper")
 const {userAuth} =require("./Middlewares/authorization")
 const {setPasswordRestPin,getPinbyEmailPin,deletePin}=require("./Model/restPIn")
 const {emailProcessor}=require("./Helpers/emailhelper")
 const {resetPassvalidation,updatePassvalidation}=require("./Middlewares/formvalidatorjoi")
+const {deleteJWT} =require("./Helpers/redishelper")
 
 
 // router.all("/",(req,res,next)=>{
@@ -165,5 +166,19 @@ router.patch("/reset-password",updatePassvalidation,async(req,res)=>{
 
 })
     
+router.delete("/logout",userAuth,async(req,res)=>{
+    const {authorization}=req.headers
+    const _id=req.userId
+    deleteJWT(authorization.split(" ")[1])
 
-module.exports=router
+ const result=await storeUserRefreshJWT({_id,token:" "})
+
+ if(result._id){
+   return   res.json({status:"Success",message:"Logged out successfully"})
+ }else{
+   return   res.json({status:"failed",message:"Unable to log you out"})
+ 
+ }
+   
+   })
+module.exports=router 

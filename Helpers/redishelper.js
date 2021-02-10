@@ -34,7 +34,7 @@ exports.getJWT=(key,value)=>{
     
 }
 
-exports.deletJWT=key=>{
+exports.deleteJWT=key=>{
     try{
         client.del(key)
     }

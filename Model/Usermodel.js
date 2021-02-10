@@ -39,7 +39,7 @@ exports.getuserbyemail =email=>{
     })
 }
 
-exports.storeUserRefreshJWT=(_id,token)=>{
+exports.storeUserRefreshJWT=({_id,token})=>{
          return new Promise((resolve,reject)=>{
              try{
                     User.findOneAndUpdate({_id},{
