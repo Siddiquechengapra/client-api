@@ -2,14 +2,14 @@ const express=require("express")
 const router=express.Router()
 const{userAuth}=require("./Middlewares/authorization")
 const{insertticket,getalltickets,getticketbyId,updateclientreply,deleteticket,updatestatusclose} = require("./Model/Ticketmodel")
-
+const{createnewticketvalidation,replymsgvalidation} =require("./Middlewares/formvalidatorjoi")
 router.all("/",(req,res,next)=>{
     
     // res.json({message:"return from ticket router "})  
     next()
 })
 
-router.post("/",userAuth,async(req,res)=>{
+router.post("/",createnewticketvalidation,userAuth,async(req,res)=>{
     const{subject,sender,message}=req.body
     const ticketObj={
         clientId:req.userId,
@@ -64,7 +64,7 @@ router.get("/:ticketid",userAuth,async(req,res)=>{
     
 })
 
-router.put("/:ticketid",userAuth,async(req,res)=>{
+router.put("/:ticketid",replymsgvalidation,userAuth,async(req,res)=>{
     const _id=req.params.ticketid
     const{message,sender}=req.body
     const clientId=req.userId
@@ -112,4 +112,4 @@ router.delete("/:ticketid",userAuth,async(req,res)=>{
 })
 
  
-module.exports=router 
+module.exports=router  
