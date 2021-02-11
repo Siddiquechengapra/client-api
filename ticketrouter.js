@@ -1,7 +1,7 @@
 const express=require("express")
 const router=express.Router()
 const{userAuth}=require("./Middlewares/authorization")
-const{insertticket,getalltickets,getticketbyId} = require("./Model/Ticketmodel")
+const{insertticket,getalltickets,getticketbyId,updateclientreply,deleteticket,updatestatusclose} = require("./Model/Ticketmodel")
 
 router.all("/",(req,res,next)=>{
     
@@ -64,5 +64,52 @@ router.get("/:ticketid",userAuth,async(req,res)=>{
     
 })
 
+router.put("/:ticketid",userAuth,async(req,res)=>{
+    const _id=req.params.ticketid
+    const{message,sender}=req.body
+    const clientId=req.userId
+    const result =await updateclientreply(_id,{message,sender})
+    console.log("result for get specific ticekt",result)
+    if(result._id){
+        return res.json({status:"conversation updated ",result})
+     
+    }else{
+        return res.json({status:"failed",message:"unable to update converation"})
+    }
 
-module.exports=router
+    
+})
+
+//close ticket with tcketid 
+router.patch("/closeticket/:ticketid",userAuth,async(req,res)=>{
+    const _id=req.params.ticketid
+    const clientId=req.userId
+    const result =await updatestatusclose(_id,clientId)
+    console.log("result for closing ticket ",result)
+    if(result._id){
+        return res.json({status:"ticket closed ",result})
+     
+    }else{
+        return res.json({status:"failed",message:"unable to close teh ticket"})
+    }
+
+    
+})
+
+router.delete("/:ticketid",userAuth,async(req,res)=>{
+    const _id=req.params.ticketid
+    const clientId=req.userId
+    const result =await deleteticket(_id,clientId)
+    console.log("result for closing ticket ",result)
+    if(result._id){
+        return res.json({status:"ticket closed ",result})
+     
+    }else{
+        return res.json({status:"failed",message:"unable to close the ticket"})
+    }
+
+    
+})
+
+ 
+module.exports=router 
