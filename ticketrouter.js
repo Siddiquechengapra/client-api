@@ -1,6 +1,7 @@
 const express=require("express")
 const router=express.Router()
-const{insertticket} = require("./Model/Ticketmodel")
+const{userAuth}=require("./Middlewares/authorization")
+const{insertticket,getalltickets,getticketbyId} = require("./Model/Ticketmodel")
 
 router.all("/",(req,res,next)=>{
     
@@ -8,10 +9,10 @@ router.all("/",(req,res,next)=>{
     next()
 })
 
-router.post("/",async(req,res)=>{
+router.post("/",userAuth,async(req,res)=>{
     const{subject,sender,message}=req.body
     const ticketObj={
-        clientId:"601f92a5c257c7116d14a350",
+        clientId:req.userId,
         subject,
         conversation:[
             {
@@ -32,5 +33,36 @@ router.post("/",async(req,res)=>{
 
     
 })
+
+//get all ticket s for a specific usr only
+router.get("/",userAuth,async(req,res)=>{
+    const clientId=req.userId
+    const result =await getalltickets(clientId)
+    console.log("result for get all tickets",result)
+    if(result && result.length){
+        return res.json({status:"success",result})
+     
+    }else{
+        return res.json({status:"failed",message:"unable to fetch details"})
+    }
+
+    
+})
+
+router.get("/:ticketid",userAuth,async(req,res)=>{
+    const _id=req.params.ticketid
+    const clientId=req.userId
+    const result =await getticketbyId(_id,clientId)
+    console.log("result for get specific ticekt",result)
+    if(result && result.length){
+        return res.json({status:"success",result})
+     
+    }else{
+        return res.json({status:"failed",message:"unable to fetch details"})
+    }
+
+    
+})
+
 
 module.exports=router
